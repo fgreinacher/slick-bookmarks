@@ -1,0 +1,34 @@
+body {
+  font-family: 'Lucida Grande';
+  font-size: 12px;
+  width: 500px;
+}
+
+.bookmark-list {
+  list-style-type: none;
+  padding: 0; 
+  margin: 0;
+}
+
+.bookmark-list-item {
+  padding: 2px;
+  background: #f1f1f1;
+}
+
+.bookmark-list-item:nth-child(odd) {
+  background: #f9f9f9;
+}
+
+.bookmark-list-item a {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bookmark-icon {
+  vertical-align: middle;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
