@@ -1,6 +1,5 @@
 body {
-  font-family: 'Lucida Grande';
-  font-size: 12px;
+  font: menu;
   width: 500px;
 }
 
@@ -11,7 +10,6 @@ body {
 }
 
 .bookmark-list-item {
-  padding: 2px;
   background: #f1f1f1;
 }
 
@@ -20,10 +18,19 @@ body {
 }
 
 .bookmark-list-item a {
+  border: 1px solid transparent;
+  padding: 1px;
+  color: black;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration: none;
+}
+
+.bookmark-list-item a:hover {
+  border: 1px solid #b6d4fc;
+  background: #f1f7ff;
 }
 
 .bookmark-icon {

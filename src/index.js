@@ -1,7 +1,4 @@
-var defaultId = '0';
-var lastActiveIdKey = 'lastActiveId';
-
-var getSubTree = function(id, callback) {
+var getFoldersAndPages = function(id, callback) {
   chrome.bookmarks.getSubTree(id, function(tree) {
     var bookmark = tree[0];
     var folders = [];
@@ -17,54 +14,70 @@ var getSubTree = function(id, callback) {
   });
 }
 
-var createListItemForUpFolder = function(id) {
+var createListItem = function(options) {
+  
+  var icon = $('<img>')
+    .attr('class', 'bookmark-icon')
+    .attr('src', options.icon);
+    
+  var span = $('<span>')
+    .text(options.text);
+  
   var link = $('<a>')
-    .data('bm-id', id)
-    .text('..')
     .attr('href', '#')
-    .click(onFolderClick);
-  return $('<li class="bookmark-list-item">').append(link);
+    .data('bm-id', options.id)
+    .data('bm-url', options.url)
+    .attr('alt', options.text)
+    .attr('title', options.description)
+    .click(options.clickHandler)
+    .append(icon)
+    .append(span);
+  return $('<li class="bookmark-list-item">')
+    .append(link);
+}
+
+var createListItemForUpFolder = function(id) {
+  return createListItem({
+    'id': id,
+    'text': '..',
+    'icon': 'folder.png',
+    'clickHandler': onFolderClick
+  });
 }
 
 var createListItemForFolder = function(bookmark) {
-  var link = $('<a>')
-    .data('bm-id', bookmark.id)
-    .text(bookmark.title)
-    .attr('alt', bookmark.title)
-    .attr('title', bookmark.title)
-    .attr('href', '#')
-    .click(onFolderClick);
-  return $('<li class="bookmark-list-item">').append(link);
+  return createListItem({
+    'id': bookmark.id,
+    'text': bookmark.title,
+    'description' : bookmark.title,
+    'icon': 'folder.png',
+    'clickHandler': onFolderClick
+  });
+}
+
+var createListItemForPage = function(bookmark) {
+  return createListItem({
+    'id': bookmark.id,
+    'url': bookmark.url,
+    'text': bookmark.title,
+    'description' : bookmark.title + ' (' + bookmark.url + ')',
+    'icon': 'chrome://favicon/' + bookmark.url,
+    'clickHandler': onPageClick
+  });
 }
 
 var onFolderClick = function() {
-  setActiveId($(this).data('bm-id')); 
+  showBookmarksBelowId($(this).data('bm-id')); 
 }
 
 var onPageClick = function() {
   chrome.tabs.create({ url: $(this).data('bm-url') });
 }
 
-var createListItemForPage = function(bookmark) {
-  var link = $('<a>')
-    .data('bm-url', bookmark.url)
-    .attr('href', '#')
-    .attr('alt', bookmark.title)
-    .attr('title', bookmark.title)
-    .click(onPageClick);
-  var icon = $('<img>')
-    .attr('class', 'bookmark-icon')
-    .attr('src', 'chrome://favicon/' + bookmark.url);
-  link.append(icon);
-  link.append($('<span>').text(bookmark.title));
-  return $('<li class="bookmark-list-item">')
-    .append(link);
-}
-
-var setActiveId = function(id) {
+var showBookmarksBelowId = function(id) {
   chrome.storage.sync.set({ 'lastActiveId': id });
   
-  getSubTree(id, function(bookmark, folders, pages) {
+  getFoldersAndPages(id, function(bookmark, folders, pages) {
     var list = $('<ul class="bookmark-list">');
     
     if(bookmark.parentId) {
@@ -86,9 +99,9 @@ var setActiveId = function(id) {
 $(document).ready(function() {
   chrome.storage.sync.get('lastActiveId', function(items) {
     if(items['lastActiveId']) {
-      setActiveId(items['lastActiveId']);
+      showBookmarksBelowId(items['lastActiveId']);
     } else {
-      setActiveId(defaultId);
+      showBookmarksBelowId('0');
     }
   });
 });
