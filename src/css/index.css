@@ -1,5 +1,5 @@
 body {
-  font: menu;
+  font: small-caption;
   width: 500px;
 }
 
@@ -20,12 +20,13 @@ body {
 .bookmark-list-item a {
   border: 1px solid transparent;
   padding: 1px;
-  color: black;
+  color: #090909;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-decoration: none;
+  vertical-align: middle;
 }
 
 .bookmark-list-item a:hover {
