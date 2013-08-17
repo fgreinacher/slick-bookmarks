@@ -7,13 +7,13 @@
     <script type="text/javascript" src="js/index.js"></script>
   </head>
   <body>
-    <ul data-bind="foreach: activeFolder().parentsAndSelf()" class="navigation">
+    <ul id="navigation" data-bind="foreach: activeFolder().parentsAndSelf()">
       <li>
         <a href="#" data-bind="click: activate">
           <span data-bind="text: title" /></a>
       </li>
     </ul>
-    <ul data-bind="foreach: activeFolder().children" class="list">
+    <ul id="list" data-bind="foreach: activeFolder().children">
       <li>
         <a href="#" data-bind="click: activate">
           <img data-bind="attr: { src: icon }" />
