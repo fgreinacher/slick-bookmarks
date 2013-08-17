@@ -1,110 +1,108 @@
-(function(bookmarks, storage, tabs, $) {
+function AppViewModel(bookmarks, storage, tabs) {
+  var bookmarks = bookmarks;
+  var storage = storage;
+  var tabs = tabs;
+  var activeFolder = ko.observable();
+  var viewModels = [];
+
+  var setAndStoreActiveFolder = function(folder) {
+    activeFolder(folder);
+    storeActiveFolder();
+  }
   
-  var restoreLastShownId = function(callback) {
-    storage.sync.get('lastShownId', function(items) {
-      if(items['lastShownId']) {
-        callback(items['lastShownId']);
-      } else {
-        callback('0');
+  var storeActiveFolder = function() {
+    storage.set({
+      'lastActiveFolderId': activeFolder()
+        .id
+    });
+  }
+
+  var restoreActiveFolder = function() {
+    storage.get('lastActiveFolderId', function(items) {
+      var lastActiveFolderId = items['lastActiveFolderId'];
+      if (lastActiveFolderId) {
+        activeFolder(viewModels[lastActiveFolderId]);
       }
     });
   }
-  
-  var saveLastShownId = function(id) {
-    storage.sync.set({ 'lastShownId': id });
-  }
-  
-  var getBookmarks = function(id, callback) {
-    bookmarks.getSubTree(id, function(tree) {
-      var bookmark = tree[0];
-      var bookmarks = [];
-      $(bookmark.children).each(function(i, x) {
-        if(x.url) {
-            x.isFolder = false;
-        } else {
-            x.isFolder = true;
-        }
-        bookmarks.push(x);
+
+  var createAndRegisterViewModel = function(parentViewModel, bookmark) {
+
+    var setCommonProperties = function(viewModel, parentViewModel, bookmark) {
+      viewModel.parent = parentViewModel;
+      viewModel.parentsAndSelf = ko.computed(function() {
+        var parentsAndSelf = [];
+        var current = viewModel;
+        do {
+          parentsAndSelf.push(current);
+          current = current.parent;
+        } while (current);
+        parentsAndSelf.reverse();
+        return parentsAndSelf;
       });
-      callback(bookmark, bookmarks);
-    });
-  }
-  
-  var createListItem = function(options) {
-    var icon = $('<img>')
-      .attr('class', 'bookmark-icon')
-      .attr('src', options.icon);
-      
-    var span = $('<span>')
-      .text(options.text);
-      
-    var link = $('<a>')
-      .attr('href', options.action ? '#' : '')
-      .attr('alt', options.text)
-      .attr('title', options.description)
-      .click(options.action)
-      .append(icon)
-      .append(span);
-    
-    var listItem = $('<li class="bookmark-list-item">')
-      .append(link);
-      
-    return listItem;
-  }
-  
-  var createListItemForUpFolder = function(id) {
-    return createListItem({
-      id: id,
-      text: '..',
-      icon: 'folder.png',
-      action: function() { showId(id); }
-    });
-  }
-  
-  var createListItemForFolder = function(bookmark) {
-    return createListItem({
-      id: bookmark.id,
-      text: bookmark.title,
-      description: bookmark.title,
-      icon: 'folder.png',
-      action: function() { showId(bookmark.id); }
-    });
-  }
-  
-  var createListItemForPage = function(bookmark) {
-    return createListItem({
-      id: bookmark.id,
-      url: bookmark.url,
-      text: bookmark.title,
-      description : bookmark.title + ' (' + bookmark.url + ')',
-      icon: 'chrome://favicon/' + bookmark.url,
-      action: function() { tabs.create({ url: bookmark.url }); }
-    });
-  }
-  
-  var showId = function(id) {
-    saveLastShownId(id);
-    
-    getBookmarks(id, function(rootBookmark, bookmarks) {
-      var list = $('<ul class="bookmark-list">');
-      
-      if(rootBookmark.parentId) {
-        list.append(createListItemForUpFolder(rootBookmark.parentId));
+      viewModel.id = bookmark.id;
+      viewModel.title = parentViewModel ? bookmark.title : "Bookmarks";
+    }
+
+    var setFolderProperties = function(viewModel, bookmark) {
+      viewModel.icon = "folder.png";
+      viewModel.canActivate = true;
+      viewModel.activate = function() {
+        setAndStoreActiveFolder(viewModel);
       }
-      
-      $(bookmarks).each(function(i, x) {
-        if(x.isFolder) {
-          list.append(createListItemForFolder(x));
-        } else {
-          list.append(createListItemForPage(x));
-        }
-      }); 
-      
-      $('#content').html(list);
+      viewModel.children = (bookmark.children || [])
+        .map(function(x) {
+        return createAndRegisterViewModel(viewModel, x);
+      });
+    }
+
+    var setPageProperties = function(viewModel, bookmark) {
+      viewModel.icon = "chrome://favicon/" + bookmark.url;
+      viewModel.canActivate = true;
+      viewModel.activate = function() {
+        tabs.create({
+          url: bookmark.url
+        });
+      }
+      viewModel.url = bookmark.url;
+      viewModel.children = [];
+    }
+
+    var createAndSetProperties = function(parentViewModel, bookmark) {
+      var viewModel = {};
+      setCommonProperties(viewModel, parentViewModel, bookmark);
+      if (bookmark.url) {
+        setPageProperties(viewModel, bookmark);
+      } else {
+        setFolderProperties(viewModel, bookmark);
+      }
+      return viewModel;
+    }
+
+    var viewModel = createAndSetProperties(parentViewModel, bookmark);
+    viewModels[bookmark.id] = viewModel;
+    return viewModel;
+  }
+
+  var init = function(doneCallback) {
+    bookmarks.getSubTree("0", function(tree) {
+      var root = createAndRegisterViewModel(null, tree[0]);
+
+      activeFolder(root);
+      restoreActiveFolder();
+
+      doneCallback();
     });
   }
-  
-  $(document).ready(function() {
-    restoreLastShownId(showId);
-  });
-})(chrome.bookmarks, chrome.storage, chrome.tabs, jQuery);
+
+  return {
+    init: init,
+    activeFolder: activeFolder,
+    setAndStoreActiveFolder: setAndStoreActiveFolder,
+  }
+}
+
+var appViewModel = new AppViewModel(chrome.bookmarks, chrome.storage.sync, chrome.tabs);
+appViewModel.init(function() {
+  ko.applyBindings(appViewModel);
+});

@@ -3,12 +3,23 @@
   <head>
     <title>Slick Bookmarks</title>
     <link rel="stylesheet" type="text/css" href="css/index.css"></link>
-    <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.10.3.custom.css"></link>
-    <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="js/knockout-2.3.0.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
   </head>
   <body>
-    <div id="content"></div>
+    <ul data-bind="foreach: activeFolder().parentsAndSelf()" class="navigation">
+      <li>
+        <a href="#" data-bind="click: activate">
+          <span data-bind="text: title" /></a>
+      </li>
+    </ul>
+    <ul data-bind="foreach: activeFolder().children" class="list">
+      <li>
+        <a href="#" data-bind="click: activate">
+          <img data-bind="attr: { src: icon }" />
+          <span data-bind="text: title" />
+        </a>
+      </li>
+    </ul>
   </body>
 </html>
