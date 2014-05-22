@@ -7,15 +7,12 @@
     <script type="text/javascript" src="js/index.js"></script>
   </head>
   <body>
-    <ul id="navigation" data-bind="foreach: activeFolder().parentsAndSelf()">
+    <div>
+      <input id="pattern" data-bind="value: pattern, valueUpdate: 'input'" />
+    </div>
+    <ul id="list" data-bind="foreach: bookmarks">
       <li>
-        <a href="#" data-bind="click: activate">
-          <span data-bind="text: title" /></a>
-      </li>
-    </ul>
-    <ul id="list" data-bind="foreach: activeFolder().children">
-      <li>
-        <a href="#" data-bind="click: activate">
+        <a href="#" data-bind="click: open, attr: { title: path }">
           <img data-bind="attr: { src: icon }" />
           <span data-bind="text: title" />
         </a>

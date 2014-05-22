@@ -1,6 +1,5 @@
 @charset "UTF-8";
 
-
 body {
   font: menu;
   font-size: 12px;
@@ -8,39 +7,15 @@ body {
   width: 500px;
 }
 
-#navigation {
-  list-style-type: none;
-  margin: 0; 
-  padding: 4px 0px 4px 0px;
-}
-
-#navigation li {
-  display: inline;
-  list-style-type: none;
-  color: #7f7f7f;
-}
-
-#navigation li:before {
-  content: '▸';
-}
-
-#navigation li:nth-of-type(1):before {
-  content: '';
-}
-
-#navigation li a {
-  color: #7f7f7f;
-  vertical-align: middle;
-  text-decoration: none;
-}
-
-#navigation li a:hover, #navigation li:last-of-type a {
-  color: #090909;
+#pattern {
+  width: 100%;
+  padding: 1px;
+  box-sizing : border-box;
 }
 
 #list {
   list-style-type: none;
-  padding: 0; 
+  padding: 0;
   margin: 4px 0px 4px 0px;
 }
 

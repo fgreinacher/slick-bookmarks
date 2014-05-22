@@ -1,108 +1,62 @@
-function AppViewModel(bookmarks, storage, tabs) {
-  var bookmarks = bookmarks;
-  var storage = storage;
-  var tabs = tabs;
-  var activeFolder = ko.observable();
-  var viewModels = [];
-
-  var setAndStoreActiveFolder = function(folder) {
-    activeFolder(folder);
-    storeActiveFolder();
-  }
-  
-  var storeActiveFolder = function() {
-    storage.set({
-      'lastActiveFolderId': activeFolder()
-        .id
-    });
-  }
-
-  var restoreActiveFolder = function() {
-    storage.get('lastActiveFolderId', function(items) {
-      var lastActiveFolderId = items['lastActiveFolderId'];
-      if (lastActiveFolderId) {
-        activeFolder(viewModels[lastActiveFolderId]);
-      }
-    });
-  }
-
-  var createAndRegisterViewModel = function(parentViewModel, bookmark) {
-
-    var setCommonProperties = function(viewModel, parentViewModel, bookmark) {
-      viewModel.parent = parentViewModel;
-      viewModel.parentsAndSelf = ko.computed(function() {
-        var parentsAndSelf = [];
-        var current = viewModel;
-        do {
-          parentsAndSelf.push(current);
-          current = current.parent;
-        } while (current);
-        parentsAndSelf.reverse();
-        return parentsAndSelf;
-      });
-      viewModel.id = bookmark.id;
-      viewModel.title = parentViewModel ? bookmark.title : "Bookmarks";
-    }
-
-    var setFolderProperties = function(viewModel, bookmark) {
-      viewModel.icon = "folder.png";
-      viewModel.canActivate = true;
-      viewModel.activate = function() {
-        setAndStoreActiveFolder(viewModel);
-      }
-      viewModel.children = (bookmark.children || [])
-        .map(function(x) {
-        return createAndRegisterViewModel(viewModel, x);
-      });
-    }
-
-    var setPageProperties = function(viewModel, bookmark) {
-      viewModel.icon = "chrome://favicon/" + bookmark.url;
-      viewModel.canActivate = true;
-      viewModel.activate = function() {
-        tabs.create({
-          url: bookmark.url
-        });
-      }
-      viewModel.url = bookmark.url;
-      viewModel.children = [];
-    }
-
-    var createAndSetProperties = function(parentViewModel, bookmark) {
-      var viewModel = {};
-      setCommonProperties(viewModel, parentViewModel, bookmark);
-      if (bookmark.url) {
-        setPageProperties(viewModel, bookmark);
-      } else {
-        setFolderProperties(viewModel, bookmark);
-      }
-      return viewModel;
-    }
-
-    var viewModel = createAndSetProperties(parentViewModel, bookmark);
-    viewModels[bookmark.id] = viewModel;
-    return viewModel;
-  }
-
-  var init = function(doneCallback) {
-    bookmarks.getSubTree("0", function(tree) {
-      var root = createAndRegisterViewModel(null, tree[0]);
-
-      activeFolder(root);
-      restoreActiveFolder();
-
-      doneCallback();
-    });
-  }
-
-  return {
-    init: init,
-    activeFolder: activeFolder,
-    setAndStoreActiveFolder: setAndStoreActiveFolder,
-  }
+function BookmarkViewModel(title, path, url) {
+  this.title = ko.observable(title);
+  this.path = ko.observable(path);
+  this.url = ko.observable(url);
+  this.icon = ko.computed(function() {
+    return "chrome://favicon/" + this.url();
+  }, this);
 }
 
-var appViewModel = new AppViewModel(chrome.bookmarks, chrome.storage.sync, chrome.tabs);
-appViewModel.init(function() {
+BookmarkViewModel.prototype.open = function() {
+  var self = this;
+  chrome.tabs.create({
+    url: self.url()
+  });
+};
+
+function AppViewModel(root) {
+  var self = this;
+
+  self.pattern = ko.observable("");
+  self.bookmarks = ko.computed(function() {
+    var result = [];
+    self.explore(result, root, self.pattern(), []);
+    return result;
+  });
+}
+
+AppViewModel.prototype.exploreFolder = function(result, folder, pattern, pathParts) {
+  var self = this;
+
+  pathParts.push(folder.title);
+  for (var i = 0; i < folder.children.length; i++) {
+    self.explore(result, folder.children[i], pattern, pathParts.slice(0));
+  }
+};
+
+AppViewModel.prototype.exploreBookmark = function(result, bookmark, pattern, pathParts) {
+  var self = this;
+
+  if (bookmark.title.toLowerCase().indexOf(pattern.toLowerCase()) != -1) {
+    result.push(
+      new BookmarkViewModel(
+        bookmark.title,
+        pathParts.join("/"),
+        bookmark.url));
+  }
+};
+
+AppViewModel.prototype.explore = function(result, bookmarkOrFolder, pattern, pathParts) {
+  var self = this;
+
+  if (bookmarkOrFolder.children) {
+    self.exploreFolder(result, bookmarkOrFolder, pattern, pathParts);
+  } else {
+    self.exploreBookmark(result, bookmarkOrFolder, pattern, pathParts);
+  }
+};
+
+chrome.bookmarks.getSubTree("0", function(tree) {
+  var appViewModel = new AppViewModel(tree[0]);
   ko.applyBindings(appViewModel);
 });
