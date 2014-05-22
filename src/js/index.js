@@ -9,6 +9,7 @@ function BookmarkViewModel(title, path, url) {
 
 BookmarkViewModel.prototype.open = function() {
   var self = this;
+
   chrome.tabs.create({
     url: self.url()
   });
