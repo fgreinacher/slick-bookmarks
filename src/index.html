@@ -4,14 +4,16 @@
     <title>Slick Bookmarks</title>
     <link rel="stylesheet" type="text/css" href="css/index.css"></link>
     <script type="text/javascript" src="js/knockout-2.3.0.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/bindings.js"></script>
+    <script type="text/javascript" src="js/keys.js"></script>
+    </script>
   </head>
   <body>
     <input id="pattern" data-bind="value: pattern, valueUpdate: 'input'" />
     <!-- ko if: bookmarks().length > 0 -->
     <ul id="list" data-bind="foreach: bookmarks">
       <li>
-        <a href="#" data-bind="click: open, attr: { title: path }">
+        <a href="#" data-bind="click: open, attr: { title: path }" class="item">
           <img data-bind="attr: { src: icon }" />
           <span data-bind="text: title" />
         </a>

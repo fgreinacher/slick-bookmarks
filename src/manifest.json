@@ -6,17 +6,26 @@
   "version": "1.0",
 
   "permissions": [
-    "bookmarks", 
+    "bookmarks",
     "tabs",
-    "chrome://favicon/",
-    "storage"
+    "chrome://favicon/"
   ],
-  
+
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-  
+
   "browser_action": {
-    "default_title": "Slick Bookmarks",  
+    "default_title": "Slick Bookmarks",
     "default_icon": "icon.png",
     "default_popup": "index.html"
+  },
+
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+B",
+        "mac": "Ctrl+B"
+      }
+    }
   }
+
 }
