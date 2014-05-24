@@ -1,3 +1,2 @@
-Slick Bookmarks
+Slick Bookmarks - Bookmark discovery, supercharged.
 ================
-Bookmark discovery supercharged.
