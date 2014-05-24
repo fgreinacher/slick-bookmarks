@@ -1,0 +1,2 @@
+initBindings();
+initInput();

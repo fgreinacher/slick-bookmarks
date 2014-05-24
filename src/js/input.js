@@ -1,4 +1,4 @@
-(function () {
+function initInput () {
   document.onmousemove = function (e) {
     var hoveredItem = document.querySelector(".item:hover");
     if (hoveredItem) {
@@ -105,4 +105,4 @@
       }
     }
   }
-})();
+}

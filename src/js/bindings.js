@@ -1,4 +1,4 @@
-(function () {
+function initBindings () {
   function BookmarkViewModel(title, path, url) {
     var self = this;
 
@@ -69,4 +69,4 @@
     var appViewModel = new AppViewModel(tree[0]);
     ko.applyBindings(appViewModel);
   });
-})();
+}
