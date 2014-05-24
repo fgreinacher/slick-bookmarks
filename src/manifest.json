@@ -9,9 +9,9 @@
   "version": "1.0",
 
   "permissions": [
-    "bookmarks", // for reading the bookmarks
-    "tabs", // for opening bookmarks
-    "chrome://favicon/" // for displaying the bookmark icons
+    "bookmarks",
+    "tabs",
+    "chrome://favicon/"
   ],
 
   "icons": {
@@ -19,7 +19,7 @@
     "48": "icon48.png",
     "128": "icon128.png" },
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'", // required for knockout.js
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
 
   "browser_action": {
     "default_title": "Slick Bookmarks",
