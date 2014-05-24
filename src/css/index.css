@@ -2,22 +2,36 @@
 
 body
 {
-  width: 400px;
   font: menu;
   font-size: 12px;
-  margin: 1px;
+  width: 500px;
+  margin: 5px;
+  color: #090909;
 }
 
 #pattern {
   width: 100%;
+  font: menu;
+  font-size: 12px;
   padding: 5px;
+  margin: 0;
   box-sizing: border-box;
+  background: #555;
+  color: #fff;
+  border-width: 0;
+}
+
+#pattern:focus {
+  outline: none;
 }
 
 #list {
   list-style-type: none;
   padding: 0;
-  margin: 4px 0px 4px 0px;
+  margin: 0;
+  margin-top: 5px;
+  max-height: 200px;
+  overflow: auto;
 }
 
 #list li {
@@ -30,7 +44,7 @@ body
 
 #list li a {
   border: 1px solid transparent;
-  padding: 1px;
+  padding: 2px;
   color: #090909;
   display: block;
   white-space: nowrap;
@@ -40,8 +54,9 @@ body
   vertical-align: middle;
 }
 
-#list li a:hover {
-  border: 1px solid #b6d4fc;
+#list li a:focus {
+  outline: none;
+  border-color: #b6d4fc;
   background: #f1f7ff;
 }
 
@@ -50,4 +65,9 @@ body
   width: 16px;
   height: 16px;
   margin-right: 2px;
+}
+
+.path {
+  font-size: 80%;
+  color: #999;
 }

@@ -1,11 +1,16 @@
 (function () {
   function BookmarkViewModel(title, path, url) {
-    this.title = ko.observable(title);
-    this.path = ko.observable(path);
-    this.url = ko.observable(url);
-    this.icon = ko.computed(function() {
-      return "chrome://favicon/" + this.url();
-    }, this);
+    var self = this;
+
+    self.title = ko.observable(title);
+    self.path = ko.observable(path);
+    self.url = ko.observable(url);
+    self.icon = ko.computed(function() {
+      return "chrome://favicon/" + self.url();
+    });
+    self.titleAndPath = ko.computed(function() {
+      return self.title() + " - " + self.path();
+    });
   }
 
   BookmarkViewModel.prototype.open = function() {
@@ -30,7 +35,9 @@
   AppViewModel.prototype.exploreFolder = function(result, folder, pattern, pathParts) {
     var self = this;
 
-    pathParts.push(folder.title);
+    if (folder.title) {
+      pathParts.push(folder.title);
+    }
     for (var i = 0; i < folder.children.length; i++) {
       self.explore(result, folder.children[i], pattern, pathParts.slice(0));
     }

@@ -1,21 +1,29 @@
 {
-  "manifest_version": 2,
 
   "name": "Slick Bookmarks",
-  "description": "Lets you browse your bookmarks in a pop up window. Nothing more.",
+  "description": "Bookmark discovery, supercharged.",
+  "author": "Florian Greinacher",
+  "homepage_url": "https://github.com/floriangreinacher/Slick-Bookmarks",
+
+  "manifest_version": 2,
   "version": "1.0",
 
   "permissions": [
-    "bookmarks",
-    "tabs",
-    "chrome://favicon/"
+    "bookmarks", // for reading the bookmarks
+    "tabs", // for opening bookmarks
+    "chrome://favicon/" // for displaying the bookmark icons
   ],
 
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png" },
+
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'", // required for knockout.js
 
   "browser_action": {
     "default_title": "Slick Bookmarks",
-    "default_icon": "icon.png",
+    "default_icon": "icon24.png",
     "default_popup": "index.html"
   },
 
