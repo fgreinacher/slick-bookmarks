@@ -45,11 +45,16 @@ function initBindings () {
 
   AppViewModel.prototype.exploreBookmark = function(result, bookmark, pattern, pathParts) {
     var self = this;
-
-    if (bookmark.title.toLowerCase().indexOf(pattern.toLowerCase()) != -1) {
+    var lowercasePattern = pattern.toLowerCase();
+    if (bookmark.title.toLowerCase().indexOf(lowercasePattern) != -1 ||
+        bookmark.url.toLowerCase().indexOf(lowercasePattern) != -1) {
+        var displayName = bookmark.title;
+        if (!displayName) {
+            displayName = bookmark.url;
+        }
       result.push(
         new BookmarkViewModel(
-          bookmark.title,
+          displayName,
           pathParts.join("/"),
           bookmark.url));
     }
