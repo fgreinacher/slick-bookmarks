@@ -1,4 +1,11 @@
 function initBindings () {
+
+  String.prototype.contains = function (needle) {
+    var self = this;
+
+    return self.toLowerCase().indexOf(needle.toLowerCase()) != -1;
+  };
+
   function BookmarkViewModel(title, path, url) {
     var self = this;
 
@@ -43,18 +50,20 @@ function initBindings () {
     }
   };
 
+  AppViewModel.prototype.bookmarkMatchesPattern = function (bookmark, pattern) {
+    var self = this;
+
+    return bookmark.title.contains(pattern) ||
+           bookmark.url.contains(pattern);
+  };
+
   AppViewModel.prototype.exploreBookmark = function(result, bookmark, pattern, pathParts) {
     var self = this;
-    var lowercasePattern = pattern.toLowerCase();
-    if (bookmark.title.toLowerCase().indexOf(lowercasePattern) != -1 ||
-        bookmark.url.toLowerCase().indexOf(lowercasePattern) != -1) {
-        var displayName = bookmark.title;
-        if (!displayName) {
-            displayName = bookmark.url;
-        }
+
+    if (self.bookmarkMatchesPattern(bookmark, pattern)) {
       result.push(
         new BookmarkViewModel(
-          displayName,
+          bookmark.title || bookmark.url,
           pathParts.join("/"),
           bookmark.url));
     }
