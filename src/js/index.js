@@ -1,2 +1,0 @@
-initBindings();
-initInput();

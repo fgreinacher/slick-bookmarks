@@ -1,4 +1,8 @@
-function initBindings () {
+/*jslint browser: true*/
+/*globals ko, chrome*/
+
+(function () {
+  "use strict";
 
   String.prototype.contains = function (needle) {
     var self = this;
@@ -12,15 +16,15 @@ function initBindings () {
     self.title = ko.observable(title);
     self.path = ko.observable(path);
     self.url = ko.observable(url);
-    self.icon = ko.computed(function() {
+    self.icon = ko.computed(function () {
       return "chrome://favicon/" + self.url();
     });
-    self.titleAndPath = ko.computed(function() {
+    self.titleAndPath = ko.computed(function () {
       return self.title() + " - " + self.path();
     });
   }
 
-  BookmarkViewModel.prototype.open = function() {
+  BookmarkViewModel.prototype.open = function () {
     var self = this;
 
     chrome.tabs.create({
@@ -32,14 +36,14 @@ function initBindings () {
     var self = this;
 
     self.pattern = ko.observable("");
-    self.bookmarks = ko.computed(function() {
+    self.bookmarks = ko.computed(function () {
       var result = [];
       self.explore(result, root, self.pattern(), []);
       return result;
     });
   }
 
-  AppViewModel.prototype.exploreFolder = function(result, folder, pattern, pathParts) {
+  AppViewModel.prototype.exploreFolder = function (result, folder, pattern, pathParts) {
     var self = this;
 
     if (folder.title) {
@@ -51,13 +55,11 @@ function initBindings () {
   };
 
   AppViewModel.prototype.bookmarkMatchesPattern = function (bookmark, pattern) {
-    var self = this;
-
     return bookmark.title.contains(pattern) ||
-           bookmark.url.contains(pattern);
+      bookmark.url.contains(pattern);
   };
 
-  AppViewModel.prototype.exploreBookmark = function(result, bookmark, pattern, pathParts) {
+  AppViewModel.prototype.exploreBookmark = function (result, bookmark, pattern, pathParts) {
     var self = this;
 
     if (self.bookmarkMatchesPattern(bookmark, pattern)) {
@@ -69,7 +71,7 @@ function initBindings () {
     }
   };
 
-  AppViewModel.prototype.explore = function(result, bookmarkOrFolder, pattern, pathParts) {
+  AppViewModel.prototype.explore = function (result, bookmarkOrFolder, pattern, pathParts) {
     var self = this;
 
     if (bookmarkOrFolder.children) {
@@ -79,8 +81,8 @@ function initBindings () {
     }
   };
 
-  chrome.bookmarks.getSubTree("0", function(tree) {
+  chrome.bookmarks.getSubTree("0", function (tree) {
     var appViewModel = new AppViewModel(tree[0]);
     ko.applyBindings(appViewModel);
   });
-}
+})();

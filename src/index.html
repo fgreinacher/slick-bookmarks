@@ -1,27 +1,27 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Slick Bookmarks</title>
-    <link rel="stylesheet" type="text/css" href="css/index.css"></link>
-    <script type="text/javascript" src="js/knockout-2.3.0.js"></script>
-    <script type="text/javascript" src="js/bindings.js"></script>
-    <script type="text/javascript" src="js/input.js"></script>
-    <script type="text/javascript" src="js/index.js"></script>
-    </script>
-    </script>
-  </head>
-  <body>
-    <input id="pattern" placeholder="Filter bookmarks" data-bind="value: pattern, valueUpdate: 'input'" />
-    <!-- ko if: bookmarks().length > 0 -->
-    <ul id="list" data-bind="foreach: bookmarks">
-      <li>
-        <a href="#" class="item" data-bind="click: open, attr: { title: titleAndPath }">
-          <img data-bind="attr: { src: icon }" />
-          <span data-bind="text: title"></span>
-          <span class="path">- <!-- ko text: path --><!-- /ko --></span>
-        </a>
-      </li>
-    </ul>
-    <!-- /ko -->
-    </body>
+
+<head>
+  <title>Slick Bookmarks</title>
+  <link rel="stylesheet" type="text/css" href="css/index.css"></link>
+  <script type="text/javascript" src="js/knockout-2.3.0.js"></script>
+  <script type="text/javascript" src="js/bindings.js"></script>
+  <script type="text/javascript" src="js/input.js"></script>
+</head>
+
+<body>
+  <input id="pattern" placeholder="Filter bookmarks" data-bind="value: pattern, valueUpdate: 'input'" />
+  <!-- ko if: bookmarks().length > 0 -->
+  <ul id="list" data-bind="foreach: bookmarks">
+    <li>
+      <a href="#" class="item" data-bind="click: open, attr: { title: titleAndPath }">
+        <img data-bind="attr: { src: icon }" />
+        <span data-bind="text: title"></span>
+        <span class="path">- <!-- ko text: path --><!-- /ko --></span>
+      </a>
+    </li>
+  </ul>
+  <!-- /ko -->
+</body>
+
 </html>
