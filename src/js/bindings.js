@@ -20,7 +20,7 @@
       return "chrome://favicon/" + self.url();
     });
     self.titleAndPath = ko.computed(function () {
-      return self.title() + " - " + self.path();
+      return self.title() + " - " + self.url() + " - " + self.path();
     });
   }
 
