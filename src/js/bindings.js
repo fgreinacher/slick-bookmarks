@@ -24,12 +24,17 @@
     });
   }
 
-  BookmarkViewModel.prototype.open = function () {
+  BookmarkViewModel.prototype.open = function (_, event) {
     var self = this;
-
-    chrome.tabs.create({
+    var opts = {
       url: self.url()
-    });
+    };
+
+    if (event.metaKey) {
+      chrome.tabs.create(opts);
+    } else {
+      chrome.tabs.update(null, opts);
+    }
   };
 
   function AppViewModel(root) {
