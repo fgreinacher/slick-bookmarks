@@ -14,7 +14,7 @@
   <!-- ko if: bookmarks().length > 0 -->
   <ul id="list" data-bind="foreach: bookmarks">
     <li>
-      <a href="#" class="item" data-bind="click: open, attr: { title: titleAndPath }">
+      <a href="#" class="item" data-bind="click: open, attr: { title: details }">
         <img data-bind="attr: { src: icon }" />
         <span data-bind="text: title"></span>
         <span class="path">- <!-- ko text: url --><!-- /ko --> - <!-- ko text: path --><!-- /ko --></span>

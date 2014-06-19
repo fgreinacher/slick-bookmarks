@@ -19,7 +19,7 @@
     self.icon = ko.computed(function () {
       return "chrome://favicon/" + self.url();
     });
-    self.titleAndPath = ko.computed(function () {
+    self.details = ko.computed(function () {
       return self.title() + " - " + self.url() + " - " + self.path();
     });
   }
@@ -35,6 +35,8 @@
     } else {
       chrome.tabs.update(null, opts);
     }
+
+    window.close();
   };
 
   function AppViewModel(root) {
