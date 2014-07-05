@@ -14,6 +14,7 @@
     var tab = 9,
       enter = 13,
       shift = 16,
+      ctrl = 17,
       arrowLeft = 37,
       arrowUp = 38,
       arrowRight = 39,
@@ -46,6 +47,7 @@
 
     case shift:
     case enter:
+    case ctrl:
       break;
 
     default:
