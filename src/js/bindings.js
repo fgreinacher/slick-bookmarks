@@ -7,7 +7,7 @@
   String.prototype.contains = function (needle) {
     var self = this;
 
-    return self.toLowerCase().indexOf(needle.toLowerCase()) != -1;
+    return self.toLowerCase().indexOf(needle.toLowerCase()) !== -1;
   };
 
   function BookmarkViewModel(title, path, url) {
@@ -30,7 +30,9 @@
       url: self.url()
     };
 
-    if (event.metaKey) {
+    var createNewTab = (self.os === "mac" && event.metaKey) || event.ctrlKey;
+
+    if (createNewTab) {
       chrome.tabs.create(opts);
     } else {
       chrome.tabs.update(null, opts);
@@ -39,7 +41,7 @@
     window.close();
   };
 
-  function AppViewModel(root) {
+  function AppViewModel(root, os) {
     var self = this;
 
     self.pattern = ko.observable("");
@@ -48,6 +50,7 @@
       self.explore(result, root, self.pattern(), []);
       return result;
     });
+    self.os = os;
   }
 
   AppViewModel.prototype.exploreFolder = function (result, folder, pattern, pathParts) {
@@ -89,7 +92,9 @@
   };
 
   chrome.bookmarks.getSubTree("0", function (tree) {
-    var appViewModel = new AppViewModel(tree[0]);
-    ko.applyBindings(appViewModel);
+    chrome.runtime.getPlatformInfo(function (platform) {
+      var appViewModel = new AppViewModel(tree[0], platform.os);
+      ko.applyBindings(appViewModel);
+    });
   });
 })();
